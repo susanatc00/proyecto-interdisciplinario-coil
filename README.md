@@ -8,7 +8,7 @@ El sistema recibe datasets CSV con órdenes médicas, aplica reglas de cobertura
 
 ---
 
-# Arquitectura
+## Arquitectura
 
 ```text
 Datasets CSV
@@ -21,27 +21,32 @@ Docker Workers Distribuidos
       ↓
 Amazon S3 (CURATED)
       ↓
-AWS Glue Catalog
+AWS Glue Data Catalog
       ↓
 Amazon Athena
       ↓
 Dashboard Streamlit
-Tecnologías utilizadas
-Amazon S3
-Amazon EC2
-AWS Glue Data Catalog
-Amazon Athena
-Docker
-Docker Compose
-Python
-Pandas
-Boto3
-Streamlit
-Componentes implementados
-1. Data Lake en Amazon S3
+```
 
-Estructura implementada:
+---
 
+## Tecnologías utilizadas
+
+| Categoría | Tecnología |
+|-----------|------------|
+| Almacenamiento | Amazon S3 |
+| Cómputo | Amazon EC2 |
+| Catálogo | AWS Glue Data Catalog |
+| Consultas | Amazon Athena |
+| Contenedores | Docker, Docker Compose |
+| Procesamiento | Python, Pandas, Boto3 |
+| Visualización | Streamlit |
+
+---
+
+## Componentes implementados
+
+### 1. Data Lake en Amazon S3
 s3://proyecto-interdisciplinario-coil-grupo07/
 │
 ├── raw/
@@ -55,120 +60,147 @@ s3://proyecto-interdisciplinario-coil-grupo07/
 ├── reports/
 │
 └── athena-results/
-2. Procesamiento distribuido
 
-La solución utiliza Docker Compose para ejecutar múltiples workers en paralelo.
+### 2. Procesamiento distribuido
 
-Cada worker:
+La solución utiliza Docker Compose para ejecutar múltiples workers en paralelo. Cada worker:
 
-Procesa un subconjunto de archivos CSV
-Aplica reglas de cobertura médica
-Genera datasets curados
-Produce reportes de trazabilidad
-3. Glue Data Catalog
+- Procesa un subconjunto de archivos CSV
+- Aplica reglas de cobertura médica
+- Genera datasets curados
+- Produce reportes de trazabilidad
 
-AWS Glue se utiliza para:
+### 3. AWS Glue Data Catalog
 
-Inferir automáticamente el esquema
-Catalogar datasets curados
-Integrar los datos con Athena
+AWS Glue se utiliza para inferir automáticamente el esquema, catalogar datasets curados e integrarlos con Athena.
 
-Base de datos:
+- **Base de datos:** `coil_medical_db`
+- **Tabla generada:** `decisiones_cobertura`
 
-coil_medical_db
-
-Tabla generada:
-
-decisiones_cobertura
-4. Athena
+### 4. Amazon Athena
 
 Athena permite realizar consultas SQL serverless sobre los datos curados almacenados en S3.
 
-Ejemplos de consultas:
-
-Cobertura total
+**Cobertura total**
+```sql
 SELECT decision_cobertura, COUNT(*) AS total
 FROM decisiones_cobertura
 GROUP BY decision_cobertura;
-Valor reconocido
+```
+
+**Valor reconocido**
+```sql
 SELECT SUM(valor_reconocido)
 FROM decisiones_cobertura;
-Top medicamentos
+```
+
+**Top medicamentos**
+```sql
 SELECT medicamento, COUNT(*) AS total
 FROM decisiones_cobertura
 GROUP BY medicamento
 ORDER BY total DESC
 LIMIT 10;
-5. Dashboard Streamlit
+```
 
-El dashboard permite visualizar:
+### 5. Dashboard Streamlit
 
-Total de órdenes procesadas
-Valor solicitado
-Valor reconocido
-Promedio de cobertura
-Distribución de cobertura
-Workers utilizados
-Vista previa de datos
-Resultados obtenidos
-Corrida	Workers	Tiempo
-run_2	2	7.369 s
-run_3	3	7.031 s
-Métricas principales
-Total procesado: 30.000 órdenes médicas
-Valor solicitado: $45,589,646,412
-Valor reconocido: $18,660,755,577
-Cobertura promedio: 41.02%
-Ejecución del proyecto
-1. Clonar repositorio
+El dashboard visualiza:
+
+- Total de órdenes procesadas
+- Valor solicitado y valor reconocido
+- Promedio de cobertura
+- Distribución de cobertura por decisión
+- Workers utilizados
+- Vista previa de datos
+
+---
+
+## Resultados obtenidos
+
+### Tiempos de ejecución
+
+| Corrida | Workers | Tiempo |
+|---------|---------|--------|
+| run_2   | 2       | 7.369 s |
+| run_3   | 3       | 7.031 s |
+
+### Métricas principales
+
+| Métrica | Valor |
+|---------|-------|
+| Total órdenes procesadas | 30.000 |
+| Valor solicitado | $45.589.646.412 |
+| Valor reconocido | $18.660.755.577 |
+| Cobertura promedio | 41.02% |
+
+---
+
+## Ejecución del proyecto
+
+### 1. Clonar repositorio
+
+```bash
 git clone https://github.com/susanatc00/proyecto-interdisciplinario-coil.git
 cd proyecto-interdisciplinario-coil
-2. Configurar entorno
+```
+
+### 2. Configurar entorno
+
+```bash
 python3 -m venv venv
 source venv/bin/activate
 pip install -r requirements.txt
-3. Ejecutar procesamiento distribuido
-2 workers
+```
+
+### 3. Ejecutar procesamiento distribuido
+
+**2 workers**
+```bash
 time docker compose -f docker-compose-2.yml up --build
-3 workers
+```
+
+**3 workers**
+```bash
 time docker compose -f docker-compose-3.yml up --build
-4. Ejecutar dashboard
+```
+
+### 4. Ejecutar dashboard
+
+```bash
 cd dashboard
 source ../venv/bin/activate
-
 streamlit run app.py \
   --server.port 8501 \
   --server.address 0.0.0.0
-Trazabilidad
+```
 
-Cada worker genera reportes JSON en:
+---
 
-reports/
+## Trazabilidad
 
-Ejemplo:
+Cada worker genera reportes JSON en `reports/`. Ejemplo: `run_3_worker_a_summary.json`
 
-run_3_worker_a_summary.json
+Cada reporte incluye:
 
-Incluyendo:
+- `worker_id` y `run_id`
+- Archivos y filas procesadas
+- Tiempo total de ejecución
+- Timestamps de inicio y fin
 
-archivos procesados
-filas procesadas
-tiempo total
-timestamps
-worker_id
-run_id
-Escalabilidad
+---
 
-La arquitectura implementa procesamiento horizontal utilizando múltiples workers Docker sobre EC2.
+## Escalabilidad
 
-Esto permite:
+La arquitectura implementa procesamiento horizontal con múltiples workers Docker sobre EC2, lo que permite:
 
-Reducir tiempos de procesamiento
-Distribuir carga
-Mejorar escalabilidad
-Mantener trazabilidad por worker
-Dashboard
+- Reducir tiempos de procesamiento
+- Distribuir la carga de trabajo
+- Mantener trazabilidad por worker
+- Escalar horizontalmente según demanda
 
-Dashboard desplegado en:
+---
 
-http://98.80.166.145:8501
+## Dashboard
+
+El dashboard está desplegado en: [http://98.80.166.145:8501](http://98.80.166.145:8501)
