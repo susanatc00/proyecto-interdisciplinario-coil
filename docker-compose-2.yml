@@ -1,0 +1,28 @@
+services:
+  worker_a:
+    build: .
+    environment:
+      BUCKET: proyecto-interdisciplinario-coil-grupo07
+      RUN_ID: run_2
+      WORKER_ID: worker_a
+      MANIFEST_PATH: /app/manifests/run_2/worker_a.txt
+      OUTPUT_PREFIX: curated/decisiones_cobertura
+      AWS_REGION: us-east-1
+      AWS_DEFAULT_REGION: us-east-1
+    volumes:
+      - ./manifests:/app/manifests
+      - ~/.aws:/root/.aws:ro
+
+  worker_b:
+    build: .
+    environment:
+      BUCKET: proyecto-interdisciplinario-coil-grupo07
+      RUN_ID: run_2
+      WORKER_ID: worker_b
+      MANIFEST_PATH: /app/manifests/run_2/worker_b.txt
+      OUTPUT_PREFIX: curated/decisiones_cobertura
+      AWS_REGION: us-east-1
+      AWS_DEFAULT_REGION: us-east-1
+    volumes:
+      - ./manifests:/app/manifests
+      - ~/.aws:/root/.aws:ro

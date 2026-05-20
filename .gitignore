@@ -1,0 +1,7 @@
+__pycache__/
+*.pyc
+venv/
+.aws/
+*.pem
+data/input/
+awscliv2.zip

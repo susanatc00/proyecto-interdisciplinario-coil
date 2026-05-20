@@ -1,0 +1,15 @@
+raw/ordenes_medicas/ordenes_01.csv
+raw/ordenes_medicas/ordenes_02.csv
+raw/ordenes_medicas/ordenes_03.csv
+raw/ordenes_medicas/ordenes_04.csv
+raw/ordenes_medicas/ordenes_05.csv
+raw/ordenes_medicas/ordenes_06.csv
+raw/ordenes_medicas/ordenes_07.csv
+raw/ordenes_medicas/ordenes_08.csv
+raw/ordenes_medicas/ordenes_09.csv
+raw/ordenes_medicas/ordenes_10.csv
+raw/ordenes_medicas/ordenes_11.csv
+raw/ordenes_medicas/ordenes_12.csv
+raw/ordenes_medicas/ordenes_13.csv
+raw/ordenes_medicas/ordenes_14.csv
+raw/ordenes_medicas/ordenes_15.csv
