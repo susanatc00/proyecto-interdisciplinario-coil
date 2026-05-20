@@ -47,6 +47,7 @@ Dashboard Streamlit
 ## Componentes implementados
 
 ### 1. Data Lake en Amazon S3
+```text
 s3://proyecto-interdisciplinario-coil-grupo07/
 │
 ├── raw/
@@ -60,6 +61,7 @@ s3://proyecto-interdisciplinario-coil-grupo07/
 ├── reports/
 │
 └── athena-results/
+```
 
 ### 2. Procesamiento distribuido
 
